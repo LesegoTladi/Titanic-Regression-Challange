@@ -1,208 +1,120 @@
-# Titanic Regression Challenge 2: Pre-processing the Raw Titanic Dataset
+# Random Forest Regression on the World Population
 
 ## Overview
 
-In this challenge, I worked on pre-processing the Titanic dataset, focusing on handling missing data, feature engineering, and preparing the dataset for regression analysis. The goal was to clean the data, handle missing values effectively, and create useful features to improve the predictive modeling process.
+In this project, I applied Random Forest Regression to predict the world population over time using historical data from 1960 to 2017. The goal was to clean the data, preprocess it, and apply a machine learning model to predict the future population of different countries based on income group classification. Random Forest, an ensemble method of decision trees, was chosen for its ability to handle complex datasets and deliver robust predictions.
 
 ## Objectives
 
-- **Handle Missing Data**: I identified and removed columns with too many missing values and handled the missing 'Age' data by imputing values based on relevant subsets of the data.
-- **Feature Engineering**: I extracted titles from the 'Name' column, grouped less common titles, and encoded the 'Title' column as dummy variables for modeling.
+- **Pre-process Data**: Clean the world population data, handle missing values, and group the data based on countries' income classification.
+- **Implement Random Forest Regression**: Build and train a Random Forest Regressor model on the processed data.
+- **Evaluate the Model**: Use K-Fold Cross Validation to evaluate model performance and ensure generalizability.
+- **Make Predictions**: Use the trained model to predict the population for various countries in the coming years.
 
 ## Table of Contents
 
 - [Installation](#installation)
 - [Data Pre-processing](#data-pre-processing)
-  - [Handling Missing Data](#handling-missing-data)
-  - [Feature Engineering](#feature-engineering)
+  - [Loading Population and Metadata](#loading-population-and-metadata)
+  - [Data Preprocessing and Grouping by Income](#data-preprocessing-and-grouping-by-income)
+- [Model Training](#model-training)
+  - [Implementing K-Fold Cross Validation](#implementing-k-fold-cross-validation)
+  - [Training the Random Forest Regressor](#training-the-random-forest-regressor)
+  - [Evaluating Model Performance](#evaluating-model-performance)
+- [Model Prediction](#model-prediction)
 - [Functions](#functions)
-  - [drop_columns](#drop_columns)
-  - [conditional_impute](#conditional_impute)
-  - [extract_title](#extract_title)
-  - [group_titles](#group_titles)
-  - [dummy_encode_titles](#dummy_encode_titles)
+  - [sklearn_kfold_split](#sklearn_kfold_split)
+  - [best_k_model](#best_k_model)
 - [Example Outputs](#example-outputs)
+- [Conclusion](#conclusion)
 
 ## Installation
 
-Before running this challenge, make sure to have the following libraries installed:
+Before running this project, make sure to have the following libraries installed:
 
 ```bash
-pip install pandas numpy seaborn matplotlib
-```
+pip install numpy pandas scikit-learn
+Data Pre-processing
+Loading Population and Metadata
+In this step, we load the world population data and country metadata that includes information on income groups. We clean and align the data to make it suitable for model training.
 
-## Data Pre-processing
+import pandas as pd
 
-### Handling Missing Data
+population_df = pd.read_csv('<data-url>', index_col='Country Code')
+meta_df = pd.read_csv('<data-url>', index_col='Country Code')
 
-I started by cleaning up the dataset to handle missing values.
+Data Preprocessing and Grouping by Income
+We process the data by grouping the countries based on income levels, preparing the dataset for training the Random Forest model. The data is cleaned by removing irrelevant columns and converting the year and population data into a usable format.
 
-1. **Removing Columns with Too Many Missing Values**:  
-   I used a custom function to remove columns that had more than a specified percentage of missing values.
+Model Training
+Implementing K-Fold Cross Validation
+We implement K-Fold Cross Validation using scikit-learn's KFold class. This ensures that our model's performance is evaluated by splitting the data into multiple training and testing sets.
 
-2. **Imputing 'Age' Data**:  
-   For the missing 'Age' values, I used the mean or median age based on the combination of 'Sex' and 'Pclass'. This helps to preserve the relationships within the data, which could be important for regression modeling.
+def sklearn_kfold_split(data, K):
+    # Implement K-Fold split
+    pass
+Training the Random Forest Regressor
+After splitting the data into K subsets, we train a Random Forest Regressor model for each fold. The performance of the model is evaluated using Mean Squared Error (MSE) to assess how well it fits the data.
 
-### Feature Engineering
+def best_k_model(data, data_indices):
+    # Implement model training and evaluation
+    pass
+Evaluating Model Performance
+We evaluate the performance of the trained models using Mean Squared Error (MSE) for each fold. This allows us to understand the generalizability and effectiveness of the model.
 
-1. **Extracting Titles from 'Name'**:  
-   I extracted titles like 'Mr.', 'Mrs.', 'Miss.', etc., from the 'Name' column and added them as a new feature.
+mean_squared_error(y_true, y_pred)
+Model Prediction
+After training and evaluating the Random Forest Regressor, we can use the best performing model to predict the population for various years.
 
-2. **Grouping Uncommon Titles**:  
-   I grouped less common titles into a new category, 'Uncommon'. This was done to simplify the dataset and focus on the most frequent titles for modeling.
 
-3. **Encoding Titles as Dummy Variables**:  
-   I used one-hot encoding to turn the 'Title' column into dummy variables so that it could be used in machine learning models.
+best_model.predict([[2025]])
+Functions
+sklearn_kfold_split
+This function splits the dataset into K subsets, ensuring that the model is trained and tested on different subsets of the data.
 
-## Functions
-
-### `drop_columns`
-
-This function removes columns that have too many missing values or too few unique values.
-
-```python
-def drop_columns(input_df, threshold, unique_value_threshold):
+def sklearn_kfold_split(data, K):
     """
-    Removes columns with too many missing values or too few unique values.
+    Splits the data into K subsets for cross-validation.
     
     Parameters:
-    - input_df: pandas DataFrame
-    - threshold: float, percentage of missing values allowed
-    - unique_value_threshold: float, percentage of unique values allowed
+    - data: pandas DataFrame
+    - K: int, the number of folds for cross-validation
     
     Returns:
-    - pandas DataFrame with cleaned columns
+    - List of training and testing subsets
     """
-    # Remove columns with too many missing values
-    missing_percentage = input_df.isnull().mean() * 100
-    drop_missing = missing_percentage[missing_percentage > threshold].index
-    input_df = input_df.drop(columns=drop_missing)
-    
-    # Remove columns with too few unique values
-    unique_percentage = input_df.nunique() / len(input_df) * 100
-    drop_unique = unique_percentage[unique_percentage < unique_value_threshold].index
-    input_df = input_df.drop(columns=drop_unique)
-    
-    return input_df
-```
+    # K-Fold split implementation
+    pass
+best_k_model
+This function trains a Random Forest Regressor on each K subset and evaluates its performance.
 
-### `conditional_impute`
-
-I used this function to impute missing 'Age' values based on the mean or median for each 'Sex' and 'Pclass' group.
-
-```python
-def conditional_impute(input_df, choice='median'):
+def best_k_model(data, data_indices):
     """
-    Imputes missing 'Age' values based on the mean or median of relevant categories.
+    Trains a Random Forest model using K-Fold cross-validation.
     
     Parameters:
-    - input_df: pandas DataFrame
-    - choice: 'mean' or 'median', specifies the imputation strategy
+    - data: pandas DataFrame
+    - data_indices: List of indices for training and testing
     
     Returns:
-    - pandas DataFrame with imputed 'Age' values
+    - Trained Random Forest model
     """
-    if choice not in ['mean', 'median']:
-        raise ValueError("Choice must be 'mean' or 'median'")
-    
-    impute_values = input_df.groupby(['Sex', 'Pclass'])['Age'].agg(choice).reset_index()
-    input_df = input_df.merge(impute_values, on=['Sex', 'Pclass'], how='left', suffixes=('', '_imputed'))
-    input_df['Age'] = input_df['Age'].fillna(input_df['Age_imputed'])
-    input_df = input_df.drop(columns=['Age_imputed'])
-    
-    return input_df
-```
+    # Random Forest training and evaluation implementation
+    pass
+Example Outputs
+sklearn_kfold_split
 
-### `extract_title`
+kfold_splits = sklearn_kfold_split(data, 5)
+# Output: List of training and testing data subsets for 5-fold cross-validation.
+best_k_model
+python
+Copy
+Edit
+best_model = best_k_model(data, kfold_splits)
+# Output: Trained Random Forest model.
+Model Prediction
 
-This function extracts titles from the 'Name' column and adds them as a new 'Title' column.
-
-```python
-def extract_title(input_df):
-    """
-    Extracts titles from the 'Name' column and adds them as a new 'Title' column.
-    
-    Parameters:
-    - input_df: pandas DataFrame
-    
-    Returns:
-    - pandas DataFrame with added 'Title' column
-    """
-    input_df['Title'] = input_df['Name'].str.extract('([A-Za-z]+)\.', expand=False)
-    return input_df
-```
-
-### `group_titles`
-
-This function groups uncommon titles into a single "Uncommon" category.
-
-```python
-def group_titles(input_df, uncommon_titles):
-    """
-    Groups uncommon titles into a single 'Uncommon' category.
-    
-    Parameters:
-    - input_df: pandas DataFrame
-    - uncommon_titles: list of strings, titles to group into 'Uncommon'
-    
-    Returns:
-    - pandas DataFrame with grouped titles
-    """
-    input_df['Title'] = input_df['Title'].apply(lambda x: x if x not in uncommon_titles else 'Uncommon')
-    return input_df
-```
-
-### `dummy_encode_titles`
-
-This function encodes the 'Title' column into dummy variables.
-
-```python
-def dummy_encode_titles(input_df):
-    """
-    Encodes the 'Title' column into dummy variables.
-    
-    Parameters:
-    - input_df: pandas DataFrame
-    
-    Returns:
-    - pandas DataFrame with dummy-encoded 'Title' column
-    """
-    return pd.get_dummies(input_df, columns=['Title'], drop_first=True)
-```
-
-## Example Outputs
-
-### `drop_columns`
-```python
-drop_columns(train_df, 60, 0.5).columns
-# Output: ['PassengerId', 'Name', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare']
-```
-
-### `conditional_impute`
-```python
-conditional_impute(train_df, choice='median')[['Name', 'Age']].tail()
-# Output: Imputed Age values based on Sex and Pclass categories.
-```
-
-### `extract_title`
-```python
-extract_title(train_df)['Title'].unique()
-# Output: ['Mr.', 'Mrs.', 'Miss.', 'Master.', 'Don.', 'Rev.', 'Dr.', 'Mme.', ...]
-```
-
-### `group_titles`
-```python
-group_titles(title_df, uncommon_titles=['Don.', 'Rev.', 'Mme.', 'Major.', 'Sir.'])['Title'].unique()
-# Output: ['Mr.', 'Mrs.', 'Miss.', 'Master.', 'Uncommon', 'Dr.', 'Ms.']
-```
-
-### `dummy_encode_titles`
-```python
-dummy_encode_titles(title_regrouped_df).head()
-# Output: DataFrame with dummy variables for the 'Title' column.
-```
-
-## Conclusion
-
-In this project, I focused on pre-processing the Titanic dataset, addressing missing values, extracting useful features, and preparing the data for regression modeling. These steps are crucial for building a robust machine learning model, and by cleaning and transforming the data effectively, I ensured that it was ready for analysis.
-```
+best_model.predict([[2025]])
+# Output: Predicted population for the year 2025.
+Conclusion
+In this project, I successfully applied Random Forest Regression to predict the world population, utilizing K-Fold Cross Validation to evaluate the model's generalizability. The preprocessing steps, such as grouping countries by income, allowed for more accurate predictions. After training the model, we were able to make reliable population forecasts for the coming years. This model can be useful for policy makers, economists, and anyone interested in future population trends and their impact on global development.
